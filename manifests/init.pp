@@ -20,7 +20,7 @@ class snap {
         source => "puppet:///modules/snap/snap_5.0.0_response.varfile"
     }
 
-    # run actual install script
+    # === run actual install script
     $snap5_dir="$snap_install_dir/5.0.0"
     exec {'SNAP install script':
         command     => "$snap_tmp_path -varfile $varfile_path -dir $snap5_dir > ~/SNAP_install.log",
@@ -33,16 +33,21 @@ class snap {
     }
 
     $snap5_bin = "$snap5_dir/bin/snap"
-    # update all modules
+    # === update all modules
     exec {'SNAP update script':
         command     => "$snap5_bin --nosplash --nogui --modules --update-all",
         require     => [Exec["SNAP install script"]],
         refreshonly => true,
     }
 
-    # set up managed symlink
+    # === set up managed symlinks
     alternatives { 'snap5':
         path => "$snap5_bin",
+    }
+    
+    $gpt5_bin = "$snap5_dir/bin/gpt"
+    alternatives { 'gpt5':
+        path => "$gpt5_bin",
     }
     # ==========================================================================
 
