@@ -32,9 +32,17 @@ class snap {
         refreshonly => true,
     }
 
+    $snap5_bin = "$snap5_dir/bin/snap"
+    # update all modules
+    exec {'SNAP update script':
+        command     => "$snap5_bin --nosplash --nogui --modules --update-all",
+        require     => [Exec["SNAP install script"]],
+        refreshonly => true,
+    }
+
     # set up managed symlink
     alternatives { 'snap5':
-        path => 'snap5_dir/bin/snap',
+        path => "$snap5_bin",
     }
     # ==========================================================================
 
@@ -64,7 +72,7 @@ class snap {
         source  => "puppet:///modules/snap/${c2rcc_installer}",
     }
     # exec {'c2rcc installation':
-    #     command     => "$snap_install_dir/bin/snap --nosplash --nogui --modules --install $c2rcc_tmp_path | echo $c2rcc_namespace > ~/c2rcc_install.log",
+    #     command     => "$snap5_bin --nosplash --nogui --modules --install $c2rcc_tmp_path | echo $c2rcc_namespace > ~/c2rcc_install.log",
     #     creates     => "$snap_install_dir/s3tbx/modules/org-esa-s3tbx-s3tbx-c2rcc.jar",
     #     require     => [
     #         File["$c2rcc_tmp_path"],
