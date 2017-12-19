@@ -41,14 +41,23 @@ class snap {
     }
 
     # === set up managed symlinks
-    alternatives { 'snap5':
-        path => "$snap5_bin",
-    }
-
-    $gpt5_bin = "$snap5_dir/bin/gpt"
-    alternatives { 'gpt5':
-        path => "$gpt5_bin",
-    }
+    ## these two don't work:
+    # alternatives { 'snap5':
+    #     path => "$snap5_bin",
+    # }
+    #
+    # $gpt5_bin = "$snap5_dir/bin/gpt"
+    # alternatives { 'gpt5':
+    #     path => "$gpt5_bin",
+    # }
+    ## maybe they should be done like below???
+    # alternative_entry { "$snap5_bin":
+    #     ensure => present,
+    #     altname => 'snap5',
+    #     priority => 10,
+    #     path => ,
+    # }
+    ## not sure https://forge.puppet.com/puppet/alternatives
     # ==========================================================================
 
     # ==========================================================================
