@@ -12,6 +12,7 @@ class snap {
     file { "$snap_tmp_path":  # NOTE: this wastes ~500MB on the agent...
         ensure  => file,
         source  => "http://step.esa.int/downloads/5.0/installers/esa-snap_all_unix_5_0.sh",
+        mode    => '0750'
     }
 
     $varfile_path = "/tmp/snap_response.varfile"
@@ -23,9 +24,9 @@ class snap {
     # === run actual install script
     $snap5_dir="$snap_install_dir/5.0.0"
     exec {'SNAP install script':
-        command     => "$snap_tmp_path -varfile $varfile_path -dir $snap5_dir > ~/SNAP_install.log",
+        command     => "$snap_tmp_path -q -varfile $varfile_path -dir $snap5_dir > ~/SNAP_install.log",
         creates     => "$snap5_dir",
-        require     => [
+        subscribe     => [
             File["$snap_tmp_path"],
             File["$varfile_path"],
         ],
@@ -36,7 +37,7 @@ class snap {
     # === update all modules
     exec {'SNAP update script':
         command     => "$snap5_bin --nosplash --nogui --modules --update-all",
-        require     => [Exec["SNAP install script"]],
+        subscribe     => [Exec["SNAP install script"]],
         refreshonly => true,
     }
 
