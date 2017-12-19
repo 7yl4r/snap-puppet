@@ -11,7 +11,7 @@ class snap {
     $snap_tmp_path  = "/tmp/${snap_installer}"
     file { "$snap_tmp_path":  # NOTE: this wastes ~500MB on the agent...
         ensure  => file,
-        source  => "puppet:///modules/snap/${snap_installer}",
+        source  => "http://step.esa.int/downloads/5.0/installers/esa-snap_all_unix_5_0.sh",
     }
 
     $varfile_path = "/tmp/snap_response.varfile"
