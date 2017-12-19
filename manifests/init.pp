@@ -44,7 +44,7 @@ class snap {
     alternatives { 'snap5':
         path => "$snap5_bin",
     }
-    
+
     $gpt5_bin = "$snap5_dir/bin/gpt"
     alternatives { 'gpt5':
         path => "$gpt5_bin",
@@ -62,20 +62,20 @@ class snap {
     # ==========================================================================
     # set up custom plugins
     # ==========================================================================
-    $plugin_dir = "$snap_install_dir/plugins"
-    # === c2rcc
-    ## install from pre-built .nbm:
-    ## NOTE: the below approach would be ideal, but unattended install is
-    ##       not working in snap right now. See:
-    ## http://forum.step.esa.int/t/unattended-installation-of-nbm-plugins/7520/3
-    $c2rcc_installer = 's3tbx-c2rcc-0.18-SNAPSHOT.nbm'
-    # $c2rcc_namespace = "org-esa-s3tbx-s3tbx-c2rcc"
-    $c2rcc_dir       = "$plugin_dir/s3tbx-c2rcc"
-    $c2rcc_nbm_path  = "$c2rcc_dir/target/${c2rcc_installer}"
-    file { "$snap_tmp_path":  # NOTE: this wastes ~5MB on the agent.
-        ensure  => file,
-        source  => "puppet:///modules/snap/${c2rcc_installer}",
-    }
+    # $plugin_dir = "$snap_install_dir/plugins"
+    # # === c2rcc
+    # ## install from pre-built .nbm:
+    # ## NOTE: the below approach would be ideal, but unattended install is
+    # ##       not working in snap right now. See:
+    # ## http://forum.step.esa.int/t/unattended-installation-of-nbm-plugins/7520/3
+    # $c2rcc_installer = 's3tbx-c2rcc-0.18-SNAPSHOT.nbm'
+    # # $c2rcc_namespace = "org-esa-s3tbx-s3tbx-c2rcc"
+    # $c2rcc_dir       = "$plugin_dir/s3tbx-c2rcc"
+    # $c2rcc_nbm_path  = "$c2rcc_dir/target/${c2rcc_installer}"
+    # file { "$snap_tmp_path":  # NOTE: this wastes ~5MB on the agent.
+    #     ensure  => file,
+    #     source  => "puppet:///modules/snap/${c2rcc_installer}",
+    # }
     # exec {'c2rcc installation':
     #     command     => "$snap5_bin --nosplash --nogui --modules --install $c2rcc_tmp_path | echo $c2rcc_namespace > ~/c2rcc_install.log",
     #     creates     => "$snap_install_dir/s3tbx/modules/org-esa-s3tbx-s3tbx-c2rcc.jar",
