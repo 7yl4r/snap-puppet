@@ -1,21 +1,19 @@
 # installs ESA SNAP / STEP(?) processing software from
 # http://step.esa.int/main/download/
 class snap (
-    $snap_install_dir = "/opt/snap",
+    $snap_base_install_dir = "/opt/snap",
     $version = "5.0",  # version in dot-notation
+    $default_version = "5.0",  # version ln from /opt/snap/default & alt as snap
     ){
     $version_ = regsubst($version, '\.', '_', 'G')  # underscore notation eg 5_0
-    $snap_installer = "esa-snap_all_unix_${version_}.sh"
-    # $snap_installer = 'esa-snap_all_unix_5_0.sh'
-    $installer_src = "http://step.esa.int/downloads/5.0/installers/esa-snap_all_unix_${version_}.sh"
-    $varfile_src = "puppet:///modules/snap/snap_${version}.0_response.varfile"
-    $snap_v_dir = "$snap_install_dir/${version}.0"
-    # $snap5_dir="$snap_install_dir/5.0.0"
+    $snap_v_dir = "${snap_base_install_dir}_${version_}"
 
     # ==========================================================================
-    # install 5.0.0
+    # install given version
     # ==========================================================================
     # http://step.esa.int/downloads/5.0/installers/esa-snap_all_unix_5_0.sh
+    $snap_installer = "esa-snap_all_unix_${version_}.sh"
+    $installer_src = "http://step.esa.int/downloads/5.0/installers/esa-snap_all_unix_${version_}.sh"
     $snap_tmp_path  = "/tmp/${snap_installer}"
     file { "$snap_tmp_path":  # NOTE: this wastes ~500MB on the agent...
         ensure  => file,
@@ -23,7 +21,8 @@ class snap (
         mode    => '0750'
     }
 
-    $varfile_path = "/tmp/snap_response.varfile"
+    $varfile_path = "/tmp/snap_response_${version_}.varfile"
+    $varfile_src = "puppet:///modules/snap/snap_${version}.0_response.varfile"
     file { "$varfile_path":
         ensure => file,
         source => $varfile_src
@@ -73,13 +72,13 @@ class snap (
     # ==========================================================================
     # https://github.com/senbox-org/snap-engine
     # https://senbox.atlassian.net/wiki/spaces/SNAP/pages/10879039/How+to+build+SNAP+from+sources
-    #$snaplatest_dir="snap_install_dir/latest"
+    #$snaplatest_dir="${snap_base_install_dir}_latest"
     # ==========================================================================
 
     # ==========================================================================
     # set up custom plugins
     # ==========================================================================
-    # $plugin_dir = "$snap_install_dir/plugins"
+    # $plugin_dir = "$snap_v_dir/plugins"
     # # === c2rcc
     # ## install from pre-built .nbm:
     # ## NOTE: the below approach would be ideal, but unattended install is
@@ -95,7 +94,7 @@ class snap (
     # }
     # exec {'c2rcc installation':
     #     command     => "$snap_v_bin --nosplash --nogui --modules --install $c2rcc_tmp_path | echo $c2rcc_namespace > ~/c2rcc_install.log",
-    #     creates     => "$snap_install_dir/s3tbx/modules/org-esa-s3tbx-s3tbx-c2rcc.jar",
+    #     creates     => "$snap_v_dir/s3tbx/modules/org-esa-s3tbx-s3tbx-c2rcc.jar",
     #     require     => [
     #         File["$c2rcc_tmp_path"],
     #         Exec['SNAP install script'],
