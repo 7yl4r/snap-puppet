@@ -6,6 +6,7 @@ class snap (
     $default_version = "5.0",  # version ln from /opt/snap/default & alt as snap
     ){
     $version_ = regsubst($version, '\.', '_', 'G')  # underscore notation eg 5_0
+    $default_version_ = regsubst($default_version, '\.', '_', 'G')
     $snap_v_dir = "${snap_base_install_dir}_${version_}"
 
     # ==========================================================================
@@ -43,8 +44,9 @@ class snap (
     # === update all modules
     exec {'SNAP update script':
         command     => "$snap_v_bin --nosplash --nogui --modules --update-all",
-        subscribe     => [Exec["SNAP install script"]],
+        subscribe   => [Exec["SNAP install script"]],
         refreshonly => true,
+        timeout     => 1200,  # 1200s == 20min
     }
 
     # === set up managed symlinks to this snap version
@@ -70,7 +72,7 @@ class snap (
     # ==========================================================================
     file { "/opt/snap":  # make default install accesible @ /opt/snap
         ensure => 'link',
-        target => "${snap_base_install_dir}_${default_version}",
+        target => "${snap_base_install_dir}_${default_version_}",
     }
     # TODO: create managed symlinks to default `snap` & `gpt` binaries
     # ==========================================================================
