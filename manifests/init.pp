@@ -49,18 +49,18 @@ class snap (
 
     # === set up managed symlinks to this snap version
     ## these two don't work:
-    # alternatives { 'snap5':
+    # alternatives { "snap${version_}":
     #     path => "$snap_v_bin",
     # }
     #
-    # $gpt5_bin = "$snap_v_dir/bin/gpt"
-    # alternatives { 'gpt5':
-    #     path => "$gpt5_bin",
+    # $gpt_v_bin = "$snap_v_dir/bin/gpt"
+    # alternatives { "gpt${version_}":
+    #     path => "$gpt_v_bin",
     # }
     ## maybe they should be done like below???
     # alternative_entry { "$snap_v_bin":
     #     ensure => present,
-    #     altname => 'snap5',
+    #     altname => "snap${version_}",
     #     priority => 10,
     #     path => ,
     # }
