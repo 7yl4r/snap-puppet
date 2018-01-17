@@ -2,8 +2,8 @@
 # http://step.esa.int/main/download/
 class snap (
     $snap_base_install_dir = "/opt/snap",
-    $version = "5.0",  # version in dot-notation
-    $default_version = "5.0",  # version ln from /opt/snap/default & alt as snap
+    $version = "6.0",  # version in dot-notation
+    $default_version = "6.0",  # version ln from /opt/snap/default & alt as snap
     ){
     $version_ = regsubst($version, '\.', '_', 'G')  # underscore notation eg 5_0
     $default_version_ = regsubst($default_version, '\.', '_', 'G')
@@ -14,7 +14,7 @@ class snap (
     # ==========================================================================
     # http://step.esa.int/downloads/5.0/installers/esa-snap_all_unix_5_0.sh
     $snap_installer = "esa-snap_all_unix_${version_}.sh"
-    $installer_src = "http://step.esa.int/downloads/5.0/installers/esa-snap_all_unix_${version_}.sh"
+    $installer_src = "http://step.esa.int/downloads/${version}/installers/esa-snap_all_unix_${version_}.sh"
     $snap_tmp_path  = "/tmp/${snap_installer}"
     file { "$snap_tmp_path":  # NOTE: this wastes ~500MB on the agent...
         ensure  => file,
