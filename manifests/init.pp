@@ -47,7 +47,7 @@ class snap (
         refreshonly => true,
     }
 
-    # === set up managed symlinks
+    # === set up managed symlinks to this snap version
     ## these two don't work:
     # alternatives { 'snap5':
     #     path => "$snap_v_bin",
@@ -66,7 +66,14 @@ class snap (
     # }
     ## not sure https://forge.puppet.com/puppet/alternatives
     # ==========================================================================
-
+    # === set link to default install
+    # ==========================================================================
+    file { "/opt/snap":  # make default install accesible @ /opt/snap
+        ensure => 'link',
+        target => "${snap_base_install_dir}_${default_version}",
+    }
+    # TODO: create managed symlinks to default `snap` & `gpt` binaries
+    # ==========================================================================
     # ==========================================================================
     # TODO: install & build latest SNAP using vcsrepo
     # ==========================================================================
