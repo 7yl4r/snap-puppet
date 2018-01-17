@@ -1,31 +1,38 @@
 # installs ESA SNAP / STEP(?) processing software from
 # http://step.esa.int/main/download/
-class snap {
-    $snap_install_dir="/opt/snap"
+class snap (
+    $snap_install_dir = "/opt/snap",
+    $version = "5.0",  # version in dot-notation
+    ){
+    $version_ = regsubst($version, '\.', '_', 'G')  # underscore notation eg 5_0
+    $snap_installer = "esa-snap_all_unix_${version_}.sh"
+    # $snap_installer = 'esa-snap_all_unix_5_0.sh'
+    $installer_src = "http://step.esa.int/downloads/5.0/installers/esa-snap_all_unix_${version_}.sh"
+    $varfile_src = "puppet:///modules/snap/snap_${version}.0_response.varfile"
+    $snap_v_dir = "$snap_install_dir/${version}.0"
+    # $snap5_dir="$snap_install_dir/5.0.0"
 
     # ==========================================================================
     # install 5.0.0
     # ==========================================================================
     # http://step.esa.int/downloads/5.0/installers/esa-snap_all_unix_5_0.sh
-    $snap_installer = 'esa-snap_all_unix_5_0.sh'
     $snap_tmp_path  = "/tmp/${snap_installer}"
     file { "$snap_tmp_path":  # NOTE: this wastes ~500MB on the agent...
         ensure  => file,
-        source  => "http://step.esa.int/downloads/5.0/installers/esa-snap_all_unix_5_0.sh",
+        source  => $installer_src,
         mode    => '0750'
     }
 
     $varfile_path = "/tmp/snap_response.varfile"
     file { "$varfile_path":
         ensure => file,
-        source => "puppet:///modules/snap/snap_5.0.0_response.varfile"
+        source => $varfile_src
     }
 
     # === run actual install script
-    $snap5_dir="$snap_install_dir/5.0.0"
     exec {'SNAP install script':
-        command     => "$snap_tmp_path -q -varfile $varfile_path -dir $snap5_dir > ~/SNAP_install.log",
-        creates     => "$snap5_dir",
+        command     => "$snap_tmp_path -q -varfile $varfile_path -dir $snap_v_dir > ~/SNAP_install.log",
+        creates     => "$snap_v_dir",
         subscribe     => [
             File["$snap_tmp_path"],
             File["$varfile_path"],
@@ -33,10 +40,10 @@ class snap {
         refreshonly => true,
     }
 
-    $snap5_bin = "$snap5_dir/bin/snap"
+    $snap_v_bin = "$snap_v_dir/bin/snap"
     # === update all modules
     exec {'SNAP update script':
-        command     => "$snap5_bin --nosplash --nogui --modules --update-all",
+        command     => "$snap_v_bin --nosplash --nogui --modules --update-all",
         subscribe     => [Exec["SNAP install script"]],
         refreshonly => true,
     }
@@ -44,15 +51,15 @@ class snap {
     # === set up managed symlinks
     ## these two don't work:
     # alternatives { 'snap5':
-    #     path => "$snap5_bin",
+    #     path => "$snap_v_bin",
     # }
     #
-    # $gpt5_bin = "$snap5_dir/bin/gpt"
+    # $gpt5_bin = "$snap_v_dir/bin/gpt"
     # alternatives { 'gpt5':
     #     path => "$gpt5_bin",
     # }
     ## maybe they should be done like below???
-    # alternative_entry { "$snap5_bin":
+    # alternative_entry { "$snap_v_bin":
     #     ensure => present,
     #     altname => 'snap5',
     #     priority => 10,
@@ -87,7 +94,7 @@ class snap {
     #     source  => "puppet:///modules/snap/${c2rcc_installer}",
     # }
     # exec {'c2rcc installation':
-    #     command     => "$snap5_bin --nosplash --nogui --modules --install $c2rcc_tmp_path | echo $c2rcc_namespace > ~/c2rcc_install.log",
+    #     command     => "$snap_v_bin --nosplash --nogui --modules --install $c2rcc_tmp_path | echo $c2rcc_namespace > ~/c2rcc_install.log",
     #     creates     => "$snap_install_dir/s3tbx/modules/org-esa-s3tbx-s3tbx-c2rcc.jar",
     #     require     => [
     #         File["$c2rcc_tmp_path"],
