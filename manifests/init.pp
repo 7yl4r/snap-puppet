@@ -23,7 +23,7 @@ class snap (
     }
 
     $varfile_path = "/tmp/snap_response_${version_}.varfile"
-    $varfile_src = "puppet:///modules/snap/snap_${version}.0_response.varfile"
+    $varfile_src = "puppet:///modules/snap/snap_response_${version_}.varfile"
     file { "$varfile_path":
         ensure => file,
         source => $varfile_src

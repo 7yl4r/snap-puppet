@@ -1,5 +1,5 @@
-# install4j response file for ESA SNAP 5.0
-#sys.installationDir=/opt/snap/5.0.0
+# install4j response file for ESA SNAP 6.0
+#sys.installationDir=/opt/snap_6_0
 deleteSnapDir=DESKTOP
 executeLauncherWithPythonAction$Boolean=false
 forcePython$Boolean=false
