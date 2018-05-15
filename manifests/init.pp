@@ -4,7 +4,8 @@ class snap (
     $snap_base_install_dir = "/opt/snap",
     $version = "6.0",  # version in dot-notation
     $default_version = "6.0",  # version ln from /opt/snap/default & alt as snap
-    ){
+    $make_symlink = true,
+){
     $version_ = regsubst($version, '\.', '_', 'G')  # underscore notation eg 5_0
     $default_version_ = regsubst($default_version, '\.', '_', 'G')
     $snap_v_dir = "${snap_base_install_dir}_${version_}"
@@ -70,9 +71,11 @@ class snap (
     # ==========================================================================
     # === set link to default install
     # ==========================================================================
-    file { "/opt/snap":  # make default install accesible @ /opt/snap
-        ensure => 'link',
-        target => "${snap_base_install_dir}_${default_version_}",
+    if ($make_symlink){
+        file { "/opt/snap":  # make default install accesible @ /opt/snap
+            ensure => 'link',
+            target => "${snap_base_install_dir}_${default_version_}",
+        }
     }
     # TODO: create managed symlinks to default `snap` & `gpt` binaries
     # ==========================================================================
@@ -89,6 +92,7 @@ class snap (
     # ==========================================================================
     # $plugin_dir = "$snap_v_dir/plugins"
     # # === c2rcc
+    # # if version == 5.0.0 (or before?){
     # ## install from pre-built .nbm:
     # ## NOTE: the below approach would be ideal, but unattended install is
     # ##       not working in snap right now. See:
