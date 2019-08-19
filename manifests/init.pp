@@ -2,8 +2,8 @@
 # http://step.esa.int/main/download/
 class snap (
     $snap_base_install_dir = "/opt/snap",
-    $version = "6.0",  # version in dot-notation
-    $default_version = "6.0",  # version ln from /opt/snap/default & alt as snap
+    $version = "7.0",  # version in dot-notation
+    $default_version = "7.0",  # version ln from /opt/snap/default & alt as snap
     $make_symlink = true,
 ){
     $version_ = regsubst($version, '\.', '_', 'G')  # underscore notation eg 5_0
